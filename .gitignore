@@ -42,3 +42,4 @@ dist/
 *.db
 *.sqlite
 *.sqlite3
+requirements.txt 
