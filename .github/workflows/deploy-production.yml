@@ -1,0 +1,33 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to DigitalOcean
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: 170.64.137.61
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            cd /var/www/mechanic-ai
+
+            git fetch origin production
+            git reset --hard origin/production
+
+            /var/www/mechanic-ai/venv/bin/pip install -r requirements.txt
+
+            systemctl restart mechanic-ai
+
+            sleep 5
+
+            curl -f https://api.surinder.dev/health
